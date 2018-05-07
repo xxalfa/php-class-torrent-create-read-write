@@ -18,13 +18,15 @@
     // TODO
     //-------------------------------------------------
 
-    // Detect and skip duplicate files.
+    // Detect and skip hidden system files.
+
+    // Detect and skip duplicate files when creating a new torrent.
 
     // Passed array must have more than two elements.
 
     // Intercept error if a file does not exist.
 
-    require_once 'Torrent.php';
+    require_once CORE_DIR . 'php-class-torrent-read-write.php';
 
     $torrent = new Torrent( CORE_DIR );
 
