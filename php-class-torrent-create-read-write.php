@@ -1,95 +1,6 @@
 <?php
 /**
-    //-------------------------------------------------
-    // TODO
-    //-------------------------------------------------
-
-    // PHP version 5.2+ ( with cURL extention enabled )
-
-    // 1 ) Features:
-    // - Decode torrent file or data from local file and distant url
-    // - Build torrent from source folder/file( s ) or distant url
-    // - Super easy usage & syntax
-    // - Silent Exception error system
-
-    // 2 ) Usage example
-    // <code>
-    // require_once 'php-class-torrent-read-write.php';
-
-    //-------------------------------------------------
-    // GET TORRENT INFOS
-    //-------------------------------------------------
-
-    // $torrent = new Torrent( './test.torrent' );
-
-    // echo '<br>private: ' . ( $torrent->is_private() ? 'yes' : 'no' ) . '<br>announce: ' . $torrent->announce() . '<br>name: ' . $torrent->name() . '<br>comment: ' . $torrent->comment() . '<br>piece_length: ' . $torrent->piece_length() . '<br>size: ' . $torrent->size( 2 ) . '<br>hash info: ' .  $torrent->hash_info() . '<br>stats: ';
-
-    // var_dump( $torrent->scrape() );
-
-    // echo '<br>content: ';
-
-    // var_dump( $torrent->content() );
-
-    // echo '<br>source: ' . $torrent;
-
-    //-------------------------------------------------
-    // GET MAGNET LINK
-    //-------------------------------------------------
-
-    // use $torrent->magnet( false ); to get non html encoded ampersand
-
-    $torrent->magnet(); 
-
-    //-------------------------------------------------
-    // CREATE TORRENT
-    //-------------------------------------------------
-
-    $torrent = new Torrent( array( 'test.mp3', 'test.jpg' ), 'http://torrent.tracker/annonce' );
-
-    $torrent->save( 'test.torrent' ); // save to disk
-
-    //-------------------------------------------------
-    // MODIFY TORRENT
-    //-------------------------------------------------
-
-    $torrent->announce( 'http://alternate-torrent.tracker/annonce' ); // add a tracker
-
-    $torrent->announce( false ); // reset announce trackers
-
-    $torrent->announce( array( 'http://torrent.tracker/annonce', 'http://alternate-torrent.tracker/annonce' ) ); // set tracker( s ), it also works with a 'one tracker' array...
-
-    $torrent->announce( array( array( 'http://torrent.tracker/annonce', 'http://alternate-torrent.tracker/annonce' ), 'http://another-torrent.tracker/annonce' ) ); // set tiered trackers
-
-    $torrent->comment( 'hello world' );
-
-    $torrent->name( 'test torrent' );
-
-    $torrent->is_private( true );
-
-    $torrent->httpseeds( 'http://file-hosting.domain/path/' ); // BitTornado implementation
-
-    $torrent->url_list( array( 'http://file-hosting.domain/path/','http://another-file-hosting.domain/path/' ) );
-
-    //-------------------------------------------------
-    // print errors
-    //-------------------------------------------------
-
-    if ( $errors = $torrent->errors() )
-    {
-        var_dump( $errors );
-    }
-
-    //-------------------------------------------------
-    // SEND TO USER
-    //-------------------------------------------------
-
-    $torrent->send();
-
-    </code>
-*/
-
-/**
- * Class Torrent Read Write
+ * Class Torrent Create Read Write
  *
  * @author   Adrien Gibrat <adrien.gibrat@gmail.com>
  * @tester   Jeong, Anton, dokcharlie, official testers ; ) Thanks for your precious feedback
@@ -97,7 +8,7 @@
  *
  * @license  http://www.gnu.org/licenses/gpl.html GNU General Public License version 3
  *
- * @version  0.0.3
+ * @version  0.0.4
  */
 class Torrent
 {
