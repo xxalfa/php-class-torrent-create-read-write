@@ -1,31 +1,41 @@
 <?php
 /**
- * Class Torrent Create Read Write
+ * Application: Class Torrent Create Read Write
  *
- * @author   Adrien Gibrat <adrien.gibrat@gmail.com>
- * @tester   Jeong, Anton, dokcharlie, official testers ; ) Thanks for your precious feedback
- * @copyleft 2010 - Just use it!
- *
- * @license  http://www.gnu.org/licenses/gpl.html GNU General Public License version 3
- *
- * @version  0.0.4
+ * @package   BitTorrent
+ * @category  FILE SHARING
+ * @version   1.0.0
+ * @author    Adrien Gibrat <adrien.gibrat@gmail.com>
+ * @copyleft  2010 - Just use it! 
+ * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License version 3   
+ * @link      
+ * @tester    Jeong, Anton, dokcharlie, official testers ; ) Thanks for your precious feedback
  */
 class Torrent
 {
     /**
-     * @const <float> Default http timeout
+     * Default http timeout.
+     *
+     * @since   1.0.0
+     * @access  public
+     * @var     float
      */
     const timeout = 30;
 
     /**
-     * @var <array> List of error occurred
+     * List of error occurred.
+     *
+     * @since   1.0.0
+     * @access  protected
+     * @static
+     * @var     array
      */
     protected static $_errors = [];
 
     /** 
      * Read and decode torrent file/data OR build a torrent from source folder/file( s )
      * Supported signatures:
-     * - Torrent(); // get an instance ( useful to scrape and check errors )
+     * - Torrent(); // get an instance (useful to scrape and check errors)
      * - Torrent( string $torrent ); // analyze a torrent file
      * - Torrent( string $torrent, string $announce );
      * - Torrent( string $torrent, array $meta );
@@ -35,6 +45,9 @@ class Torrent
      * - Torrent( array $files_list );
      * - Torrent( array $files_list, string $announce_url, [ int $piece_length ] );
      * - Torrent( array $files_list, array $meta, [ int $piece_length ] );.
+     *
+     * @since   1.0.0
+     * @access  public
      *
      * @param <string|array> torrent to read or source folder/file( s ) ( optional, to get an instance )
      * @param <string|array> announce url or meta informations ( optional )
@@ -75,6 +88,9 @@ class Torrent
     /** 
      * Convert the current Torrent instance in torrent format.
      *
+     * @since   1.0.0
+     * @access  public
+     *
      * @return <string> encoded torrent data
      */
     public function __toString()
@@ -84,6 +100,9 @@ class Torrent
 
     /** 
      * Return last error message.
+     *
+     * @since   1.0.0
+     * @access  public
      *
      * @return <string|bool> last error message or false if none
      */
@@ -95,6 +114,9 @@ class Torrent
     /** 
      * Return errors.
      *
+     * @since   1.0.0
+     * @access  public
+     *
      * @return <array|bool> error list or false if none
      */
     public function errors()
@@ -102,18 +124,21 @@ class Torrent
         return empty( self::$_errors ) ? false : self::$_errors;
     }
 
-    //-------------------------------------------------
-    // GETTERS AND SETTERS
-    //-------------------------------------------------
+/* ------------------------------------------------------------------------- */
+/* GETTERS AND SETTERS
+/* ------------------------------------------------------------------------- */
 
     /** 
      * Getter and setter of torrent announce url / list.
      *
-     * If the argument is a string, announce url is added to announce list ( or set as announce if announce is not set )
-     * If the argument is an array/object, set announce url ( with first url ) and list ( if array has more than one url ), tiered list supported
+     * If the argument is a string, announce url is added to announce list (or set as announce if announce is not set)
+     * If the argument is an array/object, set announce url (with first url) and list (if array has more than one url), tiered list supported
      * If the argument is false announce url & list are unset.
      *
-     * @param <null|false|string|array> announce url / list, reset all if false ( optional, if omitted it's a getter )
+     * @since   1.0.0
+     * @access  public
+     *
+     * @param <null|false|string|array> announce url / list, reset all if false (optional, if omitted it's a getter)
      *
      * @return <string|array|null> announce url / list or null if not set
      */
@@ -156,7 +181,10 @@ class Torrent
     /** 
      * Getter and setter of torrent creation date.
      *
-     * @param <null|integer> timestamp ( optional, if omitted it's a getter )
+     * @since   1.0.0
+     * @access  public
+     *
+     * @param <null|integer> timestamp (optional, if omitted it's a getter)
      *
      * @return <integer|null> timestamp or null if not set
      */
@@ -168,9 +196,12 @@ class Torrent
     /** 
      * Getter and setter of torrent comment.
      *
-     * @param <null|string> comment ( optional, if omitted it's a getter )
+     * @since   1.0.0
+     * @access  public
      *
-     * @return <string>|null comment or null if not set
+     * @param <null|string> comment (optional, if omitted it's a getter)
+     *
+     * @return <null|string> comment or null if not set
      */
     public function comment( $comment = null )
     {
@@ -180,9 +211,12 @@ class Torrent
     /** 
      * Getter and setter of torrent name.
      *
-     * @param <null|string> name ( optional, if omitted it's a getter )
+     * @since   1.0.0
+     * @access  public
      *
-     * @return <string>|null name or null if not set
+     * @param <null|string> name (optional, if omitted it's a getter)
+     *
+     * @return <null|string> name or null if not set
      */
     public function name( $name = null )
     {
@@ -192,7 +226,10 @@ class Torrent
     /** 
      * Getter and setter of private flag.
      *
-     * @param <null|bool> is private or not ( optional, if omitted it's a getter )
+     * @since   1.0.0
+     * @access  public
+     *
+     * @param <null|bool> is private or not (optional, if omitted it's a getter)
      *
      * @return <bool> private flag
      */
@@ -204,9 +241,12 @@ class Torrent
     /** 
      * Getter and setter of torrent source.
      *
-     * @param <null|string source> (optional, if omitted it's a getter)
+     * @since   1.0.0
+     * @access  public
      *
-     * @return <string>|null source or null if not set
+     * @param <null|string> source (optional, if omitted it's a getter)
+     *
+     * @return <null|string> source or null if not set
      */
     public function source( $source = null )
     {
@@ -216,9 +256,12 @@ class Torrent
     /** 
      * Getter and setter of webseed( s ) url list (GetRight implementation).
      *
-     * @param <null|string|array> webseed or webseeds mirror list ( optional, if omitted it's a getter )
+     * @since   1.0.0
+     * @access  public
      *
-     * @return <string>|array|null webseed( s ) or null if not set
+     * @param <null|string|array> webseed or webseeds mirror list (optional, if omitted it's a getter)
+     *
+     * @return <string|array|null> webseed( s ) or null if not set
      */
     public function url_list( $urls = null )
     {
@@ -228,21 +271,27 @@ class Torrent
     /** 
      * Getter and setter of httpseed( s ) url list (BitTornado implementation).
      *
-     * @param <null|string|array> httpseed or httpseeds mirror list ( optional, if omitted it's a getter )
+     * @since   1.0.0
+     * @access  public
      *
-     * @return <array>|null httpseed( s ) or null if not set
+     * @param <null|string|array> httpseed or httpseeds mirror list (optional, if omitted it's a getter)
+     *
+     * @return <array|null> httpseed( s ) or null if not set
      */
     public function httpseeds( $urls = null )
     {
         return is_null( $urls ) ? isset( $this->httpseeds ) ? $this->httpseeds : null : $this->touch( $this->httpseeds = (array) $urls );
     }
 
-    //-------------------------------------------------
-    // ANALYZE BIT TORRENT
-    //-------------------------------------------------
+/* ------------------------------------------------------------------------- */
+/* ANALYZE BIT TORRENT
+/* ------------------------------------------------------------------------- */
 
     /** 
      * Get piece length.
+     *
+     * @since   1.0.0
+     * @access  public
      *
      * @return <integer> piece length or null if not set
      */
@@ -254,6 +303,9 @@ class Torrent
     /** 
      * Compute hash info.
      *
+     * @since   1.0.0
+     * @access  public
+     *
      * @return <string> hash info or null if info not set
      */
     public function hash_info()
@@ -263,6 +315,9 @@ class Torrent
 
     /** 
      * List torrent content.
+     *
+     * @since   1.0.0
+     * @access  public
      *
      * @param <integer|null> size precision (optional, if omitted returns sizes in bytes)
      *
@@ -290,6 +345,9 @@ class Torrent
     /** 
      * List torrent content pieces and offset( s ).
      *
+     * @since   1.0.0
+     * @access  public
+     *
      * @return <array> file( s ) and pieces/offset( s ) list, file( s ) as keys and pieces/offset( s ) as values
      */
     public function offset()
@@ -316,7 +374,10 @@ class Torrent
     /** 
      * Sum torrent content size.
      *
-     * @param <integer|null> size precision ( optional, if omitted returns size in bytes )
+     * @since   1.0.0
+     * @access  public
+     *
+     * @param <integer|null> size precision (optional, if omitted returns size in bytes)
      *
      * @return <integer|string> file( s ) size
      */
@@ -342,11 +403,13 @@ class Torrent
     /** 
      * Request torrent statistics from scrape page USING CURL!
      *
-     * @static
+     * @since   1.0.0
+     * @access  public
+     * @static  ?!
      *
-     * @param <string>|array announce or scrape page url ( optional, to request an alternative tracker BUT required for static call )
-     * @param <string> torrent hash info ( optional, required ONLY for static call )
-     * @param <float> read timeout in seconds ( optional, default to self::timeout 30s )
+     * @param <string|array> announce or scrape page url (optional, to request an alternative tracker BUT required for static call)
+     * @param <string> torrent hash info (optional, required ONLY for static call)
+     * @param <float> read timeout in seconds (optional, default to self::timeout 30s)
      *
      * @return <array> tracker torrent statistics
      */
@@ -430,12 +493,15 @@ class Torrent
         return $scrape;
     }
 
-    //-------------------------------------------------
-    // SAVE AND SEND
-    //-------------------------------------------------
+/* ------------------------------------------------------------------------- */
+/* SAVE AND SEND
+/* ------------------------------------------------------------------------- */
 
     /**
      * Save torrent file to disk.
+     *
+     * @since   1.0.0
+     * @access  public
      *
      * @param <null|string> name of the file ( optional )
      *
@@ -448,6 +514,9 @@ class Torrent
 
     /** 
      * Send torrent file to client.
+     *
+     * @since   1.0.0
+     * @access  public
      *
      * @param <null|string> name of the file ( optional )
      */
@@ -467,6 +536,9 @@ class Torrent
     /**
      * Get magnet link.
      *
+     * @since   1.0.0
+     * @access  public
+     *
      * @param <bool> html encode ampersand, default true ( optional )
      *
      * @return <string> magnet link
@@ -478,14 +550,18 @@ class Torrent
         return sprintf( 'magnet:?xt=urn:btih:%2$s%1$sdn=%3$s%1$sxl=%4$d%1$str=%5$s', $ampersand, $this->hash_info(), urlencode( $this->name() ), $this->size(), implode( $ampersand . 'tr=', self::untier( $this->announce() ) ) );
     }
 
-    //-------------------------------------------------
-    // ENCODE BIT TORRENT
-    //-------------------------------------------------
+/* ------------------------------------------------------------------------- */
+/* ENCODE BIT TORRENT
+/* ------------------------------------------------------------------------- */
 
     /** 
      * Encode torrent data.
      *
-     * @param mixed data to encode
+     * @since   1.0.0
+     * @access  public
+     * @static
+     *
+     * @param <mixed> data to encode
      *
      * @return <string> torrent encoded data
      */
@@ -518,6 +594,10 @@ class Torrent
     /**
      * Encode torrent string.
      *
+     * @since   1.0.0
+     * @access  private
+     * @static
+     *
      * @param <string> string to encode
      *
      * @return <string> encoded string
@@ -530,6 +610,10 @@ class Torrent
     /**
      * Encode torrent integer.
      *
+     * @since   1.0.0
+     * @access  private
+     * @static
+     *
      * @param <integer> integer to encode
      *
      * @return <string> encoded integer
@@ -541,6 +625,10 @@ class Torrent
 
     /** 
      * Encode torrent dictionary or list.
+     *
+     * @since   1.0.0
+     * @access  private
+     * @static
      *
      * @param <array> array to encode
      *
@@ -572,12 +660,16 @@ class Torrent
         return $return . 'e';
     }
 
-    //-------------------------------------------------
-    // DECODE BIT TORRENT
-    //-------------------------------------------------
+/* ------------------------------------------------------------------------- */
+/* DECODE BIT TORRENT
+/* ------------------------------------------------------------------------- */
 
     /** 
      * Decode torrent data or file.
+     *
+     * @since   1.0.0
+     * @access  protected
+     * @static
      *
      * @param <string> data or file path to decode
      *
@@ -592,6 +684,10 @@ class Torrent
 
     /**
      * Decode torrent data.
+     *
+     * @since   1.0.0
+     * @access  private
+     * @static
      *
      * @param <string> data to decode
      *
@@ -628,6 +724,10 @@ class Torrent
 
     /** 
      * Decode torrent dictionary.
+     *
+     * @since   1.0.0
+     * @access  private
+     * @static
      *
      * @param <string> data to decode
      *
@@ -676,6 +776,10 @@ class Torrent
     /** 
      * Decode torrent list.
      *
+     * @since   1.0.0
+     * @access  private
+     * @static
+     *
      * @param <string> data to decode
      *
      * @return <array> decoded list
@@ -701,6 +805,10 @@ class Torrent
 
     /** 
      * Decode torrent string.
+     *
+     * @since   1.0.0
+     * @access  private
+     * @static
      *
      * @param <string> data to decode
      *
@@ -735,9 +843,13 @@ class Torrent
     /** 
      * Decode torrent integer.
      *
+     * @since   1.0.0
+     * @access  private
+     * @static
+     *
      * @param <string> data to decode
      *
-     * @return int decoded integer
+     * @return <integer> decoded integer
      */
     private static function decode_integer( &$data )
     {
@@ -772,17 +884,20 @@ class Torrent
         return 0 + $integer;
     }
 
-    //-------------------------------------------------
-    // INTERNAL HELPERS
-    //-------------------------------------------------
+/* ------------------------------------------------------------------------- */
+/* INTERNAL HELPERS
+/* ------------------------------------------------------------------------- */
 
     /** 
      * Build torrent info.
      *
+     * @since   1.0.0
+     * @access  protected
+     *
      * @param <string|array> source folder/file( s ) path
      * @param <integer> piece length
      *
-     * @return <array>|bool torrent info or false if data isn't folder/file( s )
+     * @return <array|bool> torrent info or false if data isn't folder/file( s )
      */
     protected function build( $data, $piece_length )
     {
@@ -811,6 +926,9 @@ class Torrent
     /** 
      * Set torrent creator and creation date.
      *
+     * @since   1.0.0
+     * @access  protected
+     *
      * @param any param
      *
      * @return any param
@@ -827,6 +945,10 @@ class Torrent
     /** 
      * Add an error to errors stack.
      *
+     * @since   1.0.0
+     * @access  protected
+     * @static
+     *
      * @param Exception error to add
      * @param <bool> return error message or not ( optional, default to false )
      *
@@ -840,6 +962,10 @@ class Torrent
     /** 
      * Build announce list.
      *
+     * @since   1.0.0
+     * @access  protected
+     * @static
+     *
      * @param <string|array> announce url / list
      * @param <string|array> announce url / list to add (optionnal)
      *
@@ -852,6 +978,10 @@ class Torrent
 
     /** 
      * Get the first announce url in a list.
+     *
+     * @since   1.0.0
+     * @access  protected
+     * @static
      *
      * @param <array> announce list (array of arrays if tiered trackers)
      *
@@ -870,6 +1000,10 @@ class Torrent
     /** 
      * Helper to pack data hash.
      *
+     * @since   1.0.0
+     * @access  protected
+     * @static
+     *
      * @param <string> data
      *
      * @return <string> packed data hash
@@ -881,6 +1015,10 @@ class Torrent
 
     /** 
      * Helper to build file path.
+     *
+     * @since   1.0.0
+     * @access  protected
+     * @static
      *
      * @param <array> file path
      * @param <string> base folder
@@ -897,6 +1035,10 @@ class Torrent
     /** 
      * Helper to explode file path.
      *
+     * @since   1.0.0
+     * @access  protected
+     * @static
+     *
      * @param <string> file path
      *
      * @return <array> file path
@@ -910,6 +1052,10 @@ class Torrent
      * Helper to test if an array is a list.
      *
      *  array to test
+     *
+     * @since   1.0.0
+     * @access  protected
+     * @static
      *
      * @return <bool> is the array a list or not
      */
@@ -928,6 +1074,9 @@ class Torrent
 
     /** 
      * Build pieces depending on piece length from a file handler.
+     *
+     * @since   1.0.0
+     * @access  private
      *
      * @param <ressource> file handle
      * @param <integer> piece length
@@ -966,6 +1115,9 @@ class Torrent
     /** 
      * Build torrent info from single file.
      *
+     * @since   1.0.0
+     * @access  private
+     *
      * @param <string> file path
      * @param <integer> piece length
      *
@@ -990,6 +1142,9 @@ class Torrent
 
     /** 
      * Build torrent info from files.
+     *
+     * @since   1.0.0
+     * @access  private
      *
      * @param <array> file list
      * @param <integer> piece length
@@ -1043,6 +1198,9 @@ class Torrent
     /** 
      * Build torrent info from folder content.
      *
+     * @since   1.0.0
+     * @access  private
+     *
      * @param <string> folder path
      * @param <integer> piece length
      *
@@ -1056,6 +1214,10 @@ class Torrent
     /** 
      * Helper to return the first char of encoded data.
      *
+     * @since   1.0.0
+     * @access  private
+     * @static
+     *
      * @param <string> encoded data
      *
      * @return <string|bool> first char of encoded data or false if empty data
@@ -1065,12 +1227,16 @@ class Torrent
         return empty( $data ) ? false : substr( $data, 0, 1 );
     }
 
-    //-------------------------------------------------
-    // PUBLIC HELPERS
-    //-------------------------------------------------
+/* ------------------------------------------------------------------------- */
+/* PUBLIC HELPERS
+/* ------------------------------------------------------------------------- */
 
     /** 
      * Helper to format size in bytes to human readable.
+     *
+     * @since   1.0.0
+     * @access  public
+     * @static
      *
      * @param <integer> size in bytes
      * @param <integer> precision after coma
@@ -1079,18 +1245,17 @@ class Torrent
      */
     public static function format( $size, $precision = 2 )
     {
-        $units = [ 'octets', 'Ko', 'Mo', 'Go', 'To' ];
+        $label = array( 'Bytes', 'kByte', 'MByte', 'GByte', 'TByte', 'PByte', 'EByte', 'ZByte', 'YByte' );
 
-        while ( ( $next = next( $units ) ) && $size > 1024 )
-        {
-            $size /= 1024;
-        }
-
-        return round( $size, $precision ) . ' ' . ( $next ? prev( $units ) : end( $units ) );
+        return $value ? round( $value / pow( 1024, ( $index = floor( log( $value, 1024 ) ) ) ), $precision ) . ' ' . $label[ $index ] : '0 Bytes';
     }
 
     /** 
      * Helper to return filesize (even bigger than 2Gb -linux only- and distant files size).
+     *
+     * @since   1.0.0
+     * @access  public
+     * @static
      *
      * @param <string> file path
      *
@@ -1110,6 +1275,10 @@ class Torrent
 
     /** 
      * Helper to open file to read (even bigger than 2Gb, linux only).
+     *
+     * @since   1.0.0
+     * @access  public
+     * @static
      *
      * @param <string> file path
      * @param <integer|float> file size (optional)
@@ -1138,6 +1307,10 @@ class Torrent
 
     /** 
      * Helper to scan directories files and sub directories recursively.
+     *
+     * @since   1.0.0
+     * @access  public
+     * @static
      *
      * @param <string> directory path
      *
@@ -1168,6 +1341,10 @@ class Torrent
     /** 
      * Helper to check if string is an url (http).
      *
+     * @since   1.0.0
+     * @access  public
+     * @static
+     *
      * @param <string> url to check
      *
      * @return <bool> is string an url
@@ -1179,6 +1356,10 @@ class Torrent
 
     /** 
      * Helper to check if url exists.
+     *
+     * @since   1.0.0
+     * @access  public
+     * @static
      *
      * @param <string> url to check
      *
@@ -1192,8 +1373,12 @@ class Torrent
     /** 
      * Helper to check if a file is a torrent.
      *
+     * @since   1.0.0
+     * @access  public
+     * @static
+     *
      * @param <string> file location
-     * @param <float> http timeout ( optional, default to self::timeout 30s )
+     * @param <float> http timeout (optional, default to self::timeout 30s)
      *
      * @return <bool> is the file a torrent or not
      */
@@ -1209,12 +1394,16 @@ class Torrent
     /** 
      * Helper to get (distant) file content.
      *
-     * @param <string> file location
-     * @param <float> http timeout ( optional, default to self::timeout 30s )
-     * @param <integer> starting offset ( optional, default to null )
-     * @param <integer> content length ( optional, default to null )
+     * @since   1.0.0
+     * @access  public
+     * @static
      *
-     * @return <string>|bool file content or false if error
+     * @param <string> file location
+     * @param <float> http timeout (optional, default to self::timeout 30s)
+     * @param <integer> starting offset (optional, default to null)
+     * @param <integer> content length (optional, default to null)
+     *
+     * @return <string|bool> file content or false if error
      */
     public static function file_get_contents( $file, $timeout = self::timeout, $offset = null, $length = null )
     {
@@ -1253,6 +1442,10 @@ class Torrent
 
     /** 
      * Flatten announces list.
+     *
+     * @since   1.0.0
+     * @access  public
+     * @static
      *
      * @param <array> announces list
      *
