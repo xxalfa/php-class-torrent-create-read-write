@@ -1,12 +1,12 @@
 ### PHP Class Torrent Create Read Write
 
-## Features:
+## Features
 
 - Decode torrent file or data
 - Build torrent from source folder/file(s)
 - Silent Exception error system
 
-## Usage example
+## Usage
 
 ```php
 <?php
