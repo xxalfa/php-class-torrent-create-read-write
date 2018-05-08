@@ -30,6 +30,6 @@
 
     $torrent = new Torrent( CORE_DIR );
 
-    $torrent->save( 'test.torrent' );
+    $torrent->save( CORE_DIR . 'torrent_files/test.torrent' );
 
 ?>

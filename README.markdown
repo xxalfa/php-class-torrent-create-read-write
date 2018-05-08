@@ -11,6 +11,8 @@
 2) ## Usage example
 
 ```php
+<?php
+
      header( 'Content-Type:text/plain' );
 
      require_once 'php-class-torrent-create-read-write.php';
@@ -86,4 +88,5 @@
         $torrent->send();
     }
 
+?>
 ```

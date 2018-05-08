@@ -1178,7 +1178,7 @@ class Torrent
 
         $count = count( $files ) - 1;
 
-        foreach ( $files as $i => $file )
+        foreach ( $files as $index => $file )
         {
             if ( ! $handle = self::fopen( $file, $filesize = self::filesize( $file ) ) )
             {
@@ -1187,9 +1187,9 @@ class Torrent
                 continue;
             }
 
-            $pieces .= $this->pieces( $handle, $piece_length, $count == $i );
+            $pieces .= $this->pieces( $handle, $piece_length, $count == $index );
 
-            $info_files[] = [ 'length' => $filesize, 'path' => array_diff_assoc( $files_path[ $i ], $root ) ];
+            $info_files[] = [ 'length' => $filesize, 'path' => array_diff_assoc( $files_path[ $index ], $root ) ];
         }
 
         return [ 'files' => $info_files, 'name' => end( $root ), 'piece length' => $piece_length, 'pieces' => $pieces ];
@@ -1316,26 +1316,45 @@ class Torrent
      *
      * @return <array> directory content list
      */
-    public static function scandir( $dir )
+    public static function scandir( $directory )
     {
-        $paths = [];
+        $list_of_paths = array();        
 
-        foreach ( scandir( $dir ) as $item )
+        // foreach ( new DirectoryIterator( $directory . 'torrent_files' ) as $item )
+        // {
+        //     if ( $item->isDot() ): continue; endif;
+            
+        //     if ( substr( $item, 0, 1 ) === '.' ): continue; endif;
+
+        //     if ( $item->isFile() ): $list_of_paths[] = $item->getPathname(); endif;
+            
+        //     if ( $item->isDir() ): $list_of_paths = array_merge( self::scandir( $item->getPath() ), $list_of_paths ); endif;
+        // }
+
+        foreach ( scandir( $directory . 'torrent_files' ) as $item )
         {
             if ( '.' != $item && '..' != $item )
             {
-                if ( is_dir( $path = realpath( $dir . DIRECTORY_SEPARATOR . $item ) ) )
+                $path = realpath( $directory . DIRECTORY_SEPARATOR . $item );
+
+                if ( is_dir( $path ) )
                 {
-                    $paths = array_merge( self::scandir( $path ), $paths );
+                    $list_of_paths = array_merge( self::scandir( $path ), $list_of_paths );
                 }
                 else
                 {
-                    $paths[] = $path;
+                    $list_of_paths[] = $path;
                 }
             }
         }
 
-        return $paths;
+        header( 'Content-Type:text/plain' );
+
+        echo var_dump( $list_of_paths );
+
+        exit;
+
+        return $list_of_paths;
     }
 
     /** 

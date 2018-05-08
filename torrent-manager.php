@@ -20,12 +20,32 @@
 
     if ( isset( $_REQUEST[ 'GET_LIST_OF_TORRENTS' ] ) )
     {
-        
+        $LIST_OF_FILES = array();
 
+        if ( is_readable( CORE_DIR . 'torrent_files' ) )
+        {
+            foreach ( new DirectoryIterator( CORE_DIR . 'torrent_files' ) as $ITEM )
+            {
+                if ( $ITEM->getExtension() != 'torrent' ): continue; endif;
+
+                require_once CORE_DIR . 'php-class-torrent-create-read-write.php';
+
+                $torrent = new Torrent( $ITEM->getPathname() );
+
+                $torrent->info[ 'pieces' ] = '';
+
+                $torrent->filename = $ITEM->getFilename();
+
+                $LIST_OF_FILES[] = $torrent;
+            }
+        }
+
+        header( 'Content-Type:application/json' );
+
+        echo json_encode( $LIST_OF_FILES );
 
         exit;
     }
-
 
 ?>
 <!DOCTYPE html>
@@ -49,6 +69,61 @@
         box-sizing:border-box;
         font-family:monospace;
     }
+    header
+    {
+        position:absolute;
+        top:0;
+        left:0;
+        width:100%;
+        min-height:40px;
+        padding-top:10px;
+        padding-left:10px;
+        background:green;
+    }
+    footer
+    {
+        position:absolute;
+        bottom:0;
+        left:0;
+        width:100%;
+        min-height:40px;
+        padding-top:10px;
+        padding-left:10px;
+        background:green;
+    }
+    .TORRENT_MANAGER
+    {
+        position:absolute;
+        top:0;
+        left:0;
+        right:0;
+        bottom:0;
+        margin:auto;
+        width:500px;
+        height:500px;
+        background:#41403F;
+        z-index:2000;
+        color:white;
+    }
+    .TORRENT_MANAGER header,
+    .TORRENT_MANAGER footer
+    {
+        z-index:3000;
+    }
+    .TORRENT_MANAGER section
+    {
+        overflow-y:auto;
+        position:absolute;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        padding:10px;
+        padding-top:50px;
+        padding-bottom:50px;
+        background:#41403F;
+        z-index:2000;
+    }
 
 </style>
 
@@ -65,5 +140,44 @@
 </script>
 <script type="text/javascript">
     
+    var VA1 = document.createElement( 'div' );
+
+    VA1.className = 'TORRENT_MANAGER';
+
+    var VA2 = document.createElement( 'header' );
+
+    VA1.appendChild( VA2 );
+
+    var VA2 = document.createElement( 'section' );
+
+    VA1.appendChild( VA2 );
+
+    var VA2 = document.createElement( 'footer' );
+
+    VA1.appendChild( VA2 );
+
+    document.querySelector( 'body' ).appendChild( VA1 );
+
+    // List of torrent files. EDIT DELETE
+
+    // Files or folders to be merged into a torrent.
+
+    HTTP_REQUEST.open( 'get', 'torrent-manager.php?GET_LIST_OF_TORRENTS', true );
+
+    HTTP_REQUEST.addEventListener( 'load', EVENT_LOAD__LIST_OF_FILES, false );
+
+    function EVENT_LOAD__LIST_OF_FILES( event )
+    {
+        var VA1 = new Array();
+
+        try { VA1 = JSON.parse( HTTP_REQUEST.responseText ); } catch ( error ) { return false; }
+
+        for ( var VA2 = 0; VA2 < VA1.length; VA2++ )
+        {
+            document.querySelector( '.TORRENT_MANAGER section' ).innerHTML += VA1[ VA2 ].filename;
+        }
+    }
+
+    HTTP_REQUEST.send();
 
 </script>
