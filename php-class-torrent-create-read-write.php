@@ -1320,39 +1320,33 @@ class Torrent
     {
         $list_of_paths = array();        
 
-        // foreach ( new DirectoryIterator( $directory . 'torrent_files' ) as $item )
-        // {
-        //     if ( $item->isDot() ): continue; endif;
-            
-        //     if ( substr( $item, 0, 1 ) === '.' ): continue; endif;
+        $iterator = new RecursiveDirectoryIterator( $directory, FilesystemIterator::SKIP_DOTS );
 
-        //     if ( $item->isFile() ): $list_of_paths[] = $item->getPathname(); endif;
-            
-        //     if ( $item->isDir() ): $list_of_paths = array_merge( self::scandir( $item->getPath() ), $list_of_paths ); endif;
-        // }
+        $iterator = new RecursiveIteratorIterator( $iterator );
 
-        foreach ( scandir( $directory . 'torrent_files' ) as $item )
+        $iterator = new ExcludeHiddenObjectsFilterIterator( $iterator );
+
+        foreach ( $iterator as $object )
         {
-            if ( '.' != $item && '..' != $item )
-            {
-                $path = realpath( $directory . DIRECTORY_SEPARATOR . $item );
-
-                if ( is_dir( $path ) )
-                {
-                    $list_of_paths = array_merge( self::scandir( $path ), $list_of_paths );
-                }
-                else
-                {
-                    $list_of_paths[] = $path;
-                }
-            }
+            $list_of_paths[] = $object->getPathname();
         }
 
-        header( 'Content-Type:text/plain' );
+        // foreach ( scandir( $directory ) as $item )
+        // {
+        //     if ( '.' != $item && '..' != $item )
+        //     {
+        //         $path = realpath( $directory . DIRECTORY_SEPARATOR . $item );
 
-        echo var_dump( $list_of_paths );
-
-        exit;
+        //         if ( is_dir( $path ) )
+        //         {
+        //             $list_of_paths = array_merge( self::scandir( $path ), $list_of_paths );
+        //         }
+        //         else
+        //         {
+        //             $list_of_paths[] = $path;
+        //         }
+        //     }
+        // }
 
         return $list_of_paths;
     }
@@ -1443,6 +1437,7 @@ class Torrent
         {
             curl_setopt( $handle, CURLOPT_TIMEOUT, $timeout );
         }
+
         if ( $offset || $length )
         {
             curl_setopt( $handle, CURLOPT_RANGE, $offset . '-' . ( $length ? $offset + $length - 1 : null ) );
@@ -1480,6 +1475,14 @@ class Torrent
         }
 
         return $list;
+    }
+}
+
+class ExcludeHiddenObjectsFilterIterator extends FilterIterator
+{
+    public function accept()
+    {
+        return preg_match( '/\/\./', $this->getInnerIterator()->current() ) ? false : true;
     }
 }
 ?>
