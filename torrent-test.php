@@ -26,8 +26,14 @@
 
     require_once CORE_DIR . 'php-class-torrent-create-read-write.php';
 
-    $torrent = new Torrent( CORE_DIR );
+    // $torrent = new Torrent( CORE_DIR );
 
-    $torrent->save( CORE_DIR . 'torrent_files/test.torrent' );
+    // $torrent = new Torrent( array( 'LICENSE', 'LICENSE' ) );
+
+    $torrent = new Torrent();
+
+    $torrent->single()->file( '*.mar*' );
+
+    // $torrent->save( CORE_DIR . 'test.torrent' );
 
 ?>

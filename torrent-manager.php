@@ -20,29 +20,32 @@
 
     if ( isset( $_REQUEST[ 'GET_LIST_OF_TORRENTS' ] ) )
     {
-        $LIST_OF_FILES = array();
+        is_readable( CORE_DIR ) or die ( 'Dir is not readable.' );
+        
+        $list_of_files = array();
 
-        if ( is_readable( CORE_DIR . 'torrent_files' ) )
+        $iterator = new RecursiveDirectoryIterator( CORE_DIR, FilesystemIterator::SKIP_DOTS );
+
+        $iterator = new RecursiveIteratorIterator( $iterator );
+
+        foreach ( $iterator as $object )
         {
-            foreach ( new DirectoryIterator( CORE_DIR . 'torrent_files' ) as $ITEM )
-            {
-                if ( $ITEM->getExtension() != 'torrent' ): continue; endif;
+            if ( $object->getExtension() != 'torrent' ): continue; endif;
 
-                require_once CORE_DIR . 'php-class-torrent-create-read-write.php';
+            require_once CORE_DIR . 'php-class-torrent-create-read-write.php';
 
-                $torrent = new Torrent( $ITEM->getPathname() );
+            $torrent = new Torrent( $object->getPathname() );
 
-                $torrent->info[ 'pieces' ] = '';
+            $torrent->info[ 'pieces' ] = '';
 
-                $torrent->filename = $ITEM->getFilename();
+            $torrent->filename = $object->getFilename();
 
-                $LIST_OF_FILES[] = $torrent;
-            }
+            $list_of_files[] = $torrent;
         }
 
         header( 'Content-Type:application/json' );
 
-        echo json_encode( $LIST_OF_FILES );
+        echo json_encode( $list_of_files );
 
         exit;
     }
@@ -91,6 +94,7 @@
         padding-left:10px;
         background:green;
     }
+    .DIALOG_MESSAGE,
     .TORRENT_MANAGER
     {
         position:absolute;
@@ -105,11 +109,14 @@
         z-index:2000;
         color:white;
     }
+    .DIALOG_MESSAGE header,
+    .DIALOG_MESSAGE footer,
     .TORRENT_MANAGER header,
     .TORRENT_MANAGER footer
     {
         z-index:3000;
     }
+    .DIALOG_MESSAGE section,
     .TORRENT_MANAGER section
     {
         overflow-y:auto;
@@ -136,6 +143,8 @@
     var HTTP_REQUEST = AJAX_REQUEST_HANDLING();
 
     window.onerror = function( ERROR_MESSAGE, SOURCE_URL, LINE_NUMBER, COLUMN_NUMBER ) { alert( ERROR_MESSAGE + ' on line ' + LINE_NUMBER + ':' + COLUMN_NUMBER ); };
+
+    function UNIQID() { return Math.random().toString( 36 ).substr( 2, 10 ).toUpperCase(); }
 
 </script>
 <script type="text/javascript">
@@ -179,5 +188,107 @@
     }
 
     HTTP_REQUEST.send();
+
+    //-------------------------------------------------
+    // DIALOG
+    //-------------------------------------------------
+
+    function Dialog()
+    {
+        this.MB_OK = 0; // OK (Default)
+
+        this.MB_OKCANCEL = 1; // OK | Cancel
+
+        this.MB_ABORTRETRYIGNORE = 2; // Abort | Retry | Ignore
+
+        this.MB_YESNOCANCEL = 3; // Yes | No | Cancel
+
+        this.MB_YESNO = 4; // Yes | No
+
+        this.MB_RETRYCANCEL = 5; // Retry | Cancel
+
+
+        this.MB_ICONNONE = 0; // None.
+
+        this.MB_ICONSTOP = 16; // Stop.
+
+        this.MB_ICONQUESTION = 32; // Question.
+
+        this.MB_ICONEXCLAMATION = 48; // Exclamation.
+
+        this.MB_ICONINFORMATION = 64; // Information. (Default)
+
+
+        this.MB_DEFBUTTON1 = 0; // The first button from the left. (Default)
+
+        this.MB_DEFBUTTON2 = 256; // The second button from the left.
+
+        this.MB_DEFBUTTON3 = 512; // The third button from the left.
+
+
+        this.IDOK = 1; // The OK button.
+
+        this.IDCANCEL = 2; // The Cancel button.
+
+        this.IDABORT = 3; // The Abort button.
+
+        this.IDRETRY = 4; // The Retry button.
+
+        this.IDIGNORE = 5; // The Ignore button.
+
+        this.IDYES = 6; // The Yes button.
+
+        this.IDNO = 7; // The No button.
+    }
+
+    Dialog.prototype.Message = function( /* string */ Title, /* string */ Text, /* number */ Type = this.MB_OK, /* number */ Icon = this.MB_ICONINFORMATION, /* number */ DefaultButton = this.MB_DEFBUTTON1 )
+    {
+        var DM1 = document.createElement( 'div' );
+
+        DM1.setAttribute( 'class', 'DIALOG_MESSAGE' );
+
+        DM1.setAttribute( 'identifier', UNIQID() );
+
+        var HE1 = document.createElement( 'header' );
+
+        HE1.innerHTML = Title;
+
+        DM1.appendChild( HE1 );
+
+        var SE1 = document.createElement( 'section' );
+
+        SE1.innerHTML = Text;
+
+        DM1.appendChild( SE1 );
+
+        var FO1 = document.createElement( 'footer' );
+
+        var BT1 = document.createElement( 'button' );
+
+        BT1.setAttribute( 'class', 'DIALOG_MESSAGE__BUTTON' );
+
+        BT1.setAttribute( 'type', 'button' );
+
+        BT1.innerHTML = 'test';
+
+        BT1.addEventListener( 'click', EVENT_CLICK__DIALOG_MESSAGE, false );
+
+        FO1.appendChild( BT1 );
+
+        DM1.appendChild( FO1 );
+
+        document.querySelector( 'body' ).appendChild( DM1 );
+    };
+
+    new Dialog().Message( 'aaa', 'bbb' );
+
+    new Dialog().Message( 'ccc', 'ddd' );
+
+    function EVENT_CLICK__DIALOG_MESSAGE( event )
+    {
+        // alert( this.parentNode.parentNode.getAttribute( 'identifier' ) );
+
+        document.querySelector( '[identifier="' + this.parentNode.parentNode.getAttribute( 'identifier' ) + '"]' ).outerHTML = '';
+    }
 
 </script>
