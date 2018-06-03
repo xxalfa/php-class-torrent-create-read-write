@@ -18,7 +18,8 @@ class Torrent
      *
      * @since 0.0.3
      * @access public
-     * @var float
+     *
+     * @var <float>
      */
     const timeout = 30;
 
@@ -28,7 +29,8 @@ class Torrent
      * @since 0.0.3
      * @access protected
      * @static
-     * @var array
+     *
+     * @var <array>
      */
     protected static $_errors = [];
 
@@ -233,7 +235,7 @@ class Torrent
      *
      * @param <null|bool> is private or not (optional, if omitted it's a getter)
      *
-     * @return <bool> private flag
+     * @return <boolean> private flag
      */
     public function is_private( $private = null )
     {
@@ -496,23 +498,8 @@ class Torrent
     }
 
 /* ------------------------------------------------------------------------- */
-/* SAVE AND SEND
+/* SEND
 /* ------------------------------------------------------------------------- */
-
-    /**
-     * Save torrent file to disk.
-     *
-     * @since 0.0.3
-     * @access public
-     *
-     * @param <null|string> name of the file ( optional )
-     *
-     * @return <bool> file has been saved or not
-     */
-    public function save( $filename = null )
-    {
-        return file_put_contents( is_null( $filename ) ? $this->info[ 'name' ] . '.torrent' : $filename, $this->encode( $this ) );
-    }
 
     /**
      * Send torrent file to client.
@@ -541,7 +528,7 @@ class Torrent
      * @since 0.0.3
      * @access public
      *
-     * @param <bool> html encode ampersand, default true ( optional )
+     * @param <boolean> html encode ampersand, default true ( optional )
      *
      * @return <string> magnet link
      */
@@ -952,7 +939,7 @@ class Torrent
      * @static
      *
      * @param Exception error to add
-     * @param <bool> return error message or not ( optional, default to false )
+     * @param <boolean> return error message or not (optional, default to false)
      *
      * @return <bool|string> return false or error message if requested
      */
@@ -1059,7 +1046,7 @@ class Torrent
      * @access protected
      * @static
      *
-     * @return <bool> is the array a list or not
+     * @return <boolean> is the array a list or not
      */
     protected static function is_list( $array )
     {
@@ -1082,7 +1069,7 @@ class Torrent
      *
      * @param <ressource> file handle
      * @param <integer> piece length
-     * @param <bool> is last piece
+     * @param <boolean> is last piece
      *
      * @return <string> pieces
      */
@@ -1320,7 +1307,7 @@ class Torrent
      */
     public static function searches_a_folder_for_substructures_and_files( $path )
     {
-        $list_of_files = array();
+        $list_of_paths = array();
 
         // foreach ( scandir( $path ) as $item )
         // {
@@ -1330,11 +1317,11 @@ class Torrent
 
         //     if ( is_dir( $realpath ) )
         //     {
-        //         $list_of_files = array_merge( self::searches_a_folder_for_substructures_and_files( $realpath ), $list_of_files );
+        //         $list_of_paths = array_merge( self::searches_a_folder_for_substructures_and_files( $realpath ), $list_of_paths );
         //     }
         //     else
         //     {
-        //         $list_of_files[] = $realpath;
+        //         $list_of_paths[] = $realpath;
         //     }
         // }
 
@@ -1346,10 +1333,10 @@ class Torrent
 
         foreach ( $iterator as $object )
         {
-            $list_of_files[] = $object->getPathname();
+            $list_of_paths[] = $object->getPathname();
         }
 
-        return $list_of_files;
+        return $list_of_paths;
     }
 
     /**
@@ -1361,7 +1348,7 @@ class Torrent
      *
      * @param <string> url to check
      *
-     * @return <bool> is string an url
+     * @return <boolean> is string an url
      */
     public static function is_url( $url )
     {
@@ -1377,7 +1364,7 @@ class Torrent
      *
      * @param <string> url to check
      *
-     * @return <bool> does the url exist or not
+     * @return <boolean> does the url exist or not
      */
     public static function url_exists( $url )
     {
@@ -1397,7 +1384,7 @@ class Torrent
      * @param <string> file location
      * @param <float> http timeout (optional, default to self::timeout 30s)
      *
-     * @return <bool> is the file a torrent or not
+     * @return <boolean> is the file a torrent or not
      */
     public static function is_torrent( $file, $timeout = self::timeout )
     {
@@ -1478,17 +1465,135 @@ class Torrent
     }
 
     /**
+     * Can be called to specify which directory to work with.
+     *
+     * @since 0.0.7 (2018-06-03)
+     * @access public
+     *
+     * @param $value <null>
+     *
+     * @return \Torrent
+     */
+    public function workspace( $value = null )
+    {
+        return $this;
+    }
+
+    /**
+     * Can be called to include hidden objects.
+     *
+     * @since 0.0.7 (2018-06-03)
+     * @access public
+     *
+     * @param $value <null>
+     *
+     * @return \Torrent
+     */
+    public function hidden( $value = null )
+    {
+        return $this;
+    }
+
+    /**
+     * Used to specify whether the files or folders are selected for a particular search pattern.
+     *
+     * @since 0.0.7 (2018-06-03)
+     * @access private
+     *
+     * @var <boolean>
+     */
+    private $is_a_pattern_set = false;
+
+    /**
+     * Consists of an array containing the search patterns to be included or excluded.
+     *
+     * @since 0.0.7 (2018-06-03)
+     * @access private
+     *
+     * @var <array>
+     */
+    private $pattern = array( 'include' => null, 'exclude' => null );
+
+    /**
+     * Can be called to include objects with a specific search pattern.
+     *
+     * @since 0.0.7 (2018-06-03)
+     * @access public
+     *
+     * @param $value <null> Contains the search pattern.
+     *
+     * @return \Torrent
+     */
+    public function include( $value = null )
+    {
+        if ( is_null( $value ) == false )
+        {
+            $this->is_a_pattern_set = true;
+
+            array_push( $this->pattern[ 'include' ], $this->convert_a_wildcard_to_regex_pattern( $value ) );
+        }
+
+        return $this;
+    }
+
+    /**
+     * Can be called to exclude objects with a specific search pattern.
+     *
+     * @since 0.0.7 (2018-06-03)
+     * @access public
+     *
+     * @param $value <null> Contains the search pattern.
+     *
+     * @return \Torrent
+     */
+    public function exclude( $value = null )
+    {
+        if ( is_null( $value ) == false )
+        {
+            $this->is_a_pattern_set = true;
+
+            array_push( $this->pattern[ 'exclude' ], $this->convert_a_wildcard_to_regex_pattern( $value ) );
+        }
+
+        return $this;
+    }
+
+    /**
+     * Used to specify whether one or more torrent files should be created from multiple objects.
+     *
+     * @since 0.0.6 (2018-05-31)
+     * @access private
+     *
+     * @var <boolean>
+     */
+    private $is_single_processing_active = false;
+
+    /**
      * Determines how to handle each file or folder as a single object to create a torrent file. The names of files or folders are selected only at the first level with a specific search pattern.
      *
      * @since 0.0.5
      * @access public
      *
-     * @param <string> 
+     * @param <string>
+     *
+     * @return \Torrent
      */
-    public function single( $path = null )
+    public function single( $void = null )
     {
+        $this->is_single_processing_active = true;
+
         return $this;
     }
+
+    /**
+     * Contains all information that was generated during processing. There can be multiple torrent files.
+     *
+     * @since 0.0.7 (2018-06-03)
+     * @access private
+     *
+     * @var <object>
+     */
+    private $torrent = (object) [];
 
     /**
      * Search for single files using the search pattern and create torrent files from them.
@@ -1496,26 +1601,37 @@ class Torrent
      * @since 0.0.5
      * @access public
      *
-     * @param <string> $pattern Can be set to only select files containing a specific search pattern.
+     * @param <string>
+     *
+     * @return \Torrent
      */
-    public function file( $pattern = null )
+    public function file( $void = null )
     {
-        $path = dirname( __FILE__ );
-
-        $iterator = new RecursiveDirectoryIterator( $path, FilesystemIterator::SKIP_DOTS );
-
-        $iterator = new RegexIterator( $iterator, $this->convert_a_wildcard_to_regex_pattern( $pattern ) );
-
-        // $iterator = new RegexIterator( $iterator, $this->convert_a_wildcard_to_regex_pattern( '*write.*,*manager.*' ) );
-
-        // $iterator = new RegexIterator( $iterator, $this->convert_a_wildcard_to_regex_pattern( '*write.*', '*manager.*' ) );
-
-        foreach ( $iterator as $object )
+        if ( $this->is_single_processing_active )
         {
-            echo $object . PHP_EOL;
-        }
+            $path = dirname( __FILE__ );
 
-        exit;
+            $iterator = new RecursiveDirectoryIterator( $path, FilesystemIterator::SKIP_DOTS );
+
+            if ( $this->is_a_pattern_set )
+            {
+                $iterator = new RegexIterator( $iterator, $this->pattern );
+            }
+
+            foreach ( $iterator as $object )
+            {
+                if ( $object->isFile() )
+                {
+                    echo $object . PHP_EOL;
+                }
+            }
+
+            exit;
+        }
+        else
+        {
+
+        }
 
         return $this;
     }
@@ -1526,28 +1642,68 @@ class Torrent
      * @since 0.0.5
      * @access public
      *
-     * @param <string> $pattern Can be set to only select folders containing a specific search pattern.
+     * @param $pattern <string> Can be set to only select folders containing a specific search pattern.
+     *
+     * @return \Torrent
      */
-    public function folder( $pattern = null )
+    public function folder( $void = null )
     {
+        if ( $this->is_single_processing_active )
+        {
 
+        }
+        else
+        {
+
+        }
 
         return $this;
     }
 
     /**
-     * 
+     * Convert a wildcard to RegEx pattern.
      *
      * @since 0.0.5
      * @access private
      *
-     * @param <string>
+     * @param $value <string> String with wildcards converted to the RegEx standard.
+     *
+     * @return <string> Returns a string in which the wildcards were converted.
      */
-    private function convert_a_wildcard_to_regex_pattern( $pattern )
+    private function convert_a_wildcard_to_regex_pattern( $value = null )
     {
-        // fnmatch( 'dir/*/file', 'dir/folder1/file' );
+        if ( empty( $value ) ): return false; endif;
 
-        return '/^' . str_replace( '\*' , '.+?', preg_quote( is_null( $pattern ) ? '*' : $pattern, '/' ) ) . '$/i';
+        if ( is_array( $value ) )
+        {
+            // '*write.*', '*manager.*'
+        }
+
+        if ( strpos( $value, ',' ) !== false )
+        {
+            // '*write.*,*manager.*'
+        }
+
+        // fnmatch( 'dir/*/file', 'dir/folder1/file' ); // The operation of the function still needs to be checked.
+
+        return '/^' . str_replace( '\*' , '.+?', preg_quote( is_null( $value ) ? '*' : $value, '/' ) ) . '$/i';
+    }
+
+    /**
+     * Save torrent file to disk.
+     *
+     * @since 0.0.3
+     * @access public
+     *
+     * @param $value <null|string> Name of the file (optional).
+     *
+     * @return <boolean> The return is positive if the torrent file(s) could be created. If not, a silent error is reported.
+     */
+    public function save( $value = null )
+    {
+        // If single file or folder is activated, a separate torrent file must be created for each file / folder.
+
+        // return file_put_contents( is_null( $value ) ? $this->info[ 'name' ] . '.torrent' : $value, $this->encode( $this ) );
     }
 }
 

@@ -32,7 +32,9 @@
 
     $torrent = new Torrent();
 
-    $torrent->single()->file( '*.mar*' );
+    // $torrent->single()->file( '*ICENS*' );
+
+    // $torrent->single()->folder( '*' );
 
     // $torrent->save( CORE_DIR . 'test.torrent' );
 

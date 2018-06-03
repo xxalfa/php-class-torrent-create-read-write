@@ -241,7 +241,7 @@
         this.IDNO = 7; // The No button.
     }
 
-    Dialog.prototype.Message = function( /* string */ Title, /* string */ Text, /* number */ Type = this.MB_OK, /* number */ Icon = this.MB_ICONINFORMATION, /* number */ DefaultButton = this.MB_DEFBUTTON1 )
+    Dialog.prototype.Message = function( /* string */ Title, /* string */ Text, /* integer */ Type = this.MB_OK, /* integer */ Icon = this.MB_ICONINFORMATION, /* integer */ DefaultButton = this.MB_DEFBUTTON1 )
     {
         var DM1 = document.createElement( 'div' );
 
@@ -288,7 +288,11 @@
     {
         // alert( this.parentNode.parentNode.getAttribute( 'identifier' ) );
 
-        document.querySelector( '[identifier="' + this.parentNode.parentNode.getAttribute( 'identifier' ) + '"]' ).outerHTML = '';
+        // document.querySelector( '[identifier="' + this.parentNode.parentNode.getAttribute( 'identifier' ) + '"]' ).outerHTML = '';
+
+        var element = document.querySelector( '[identifier="' + this.parentNode.parentNode.getAttribute( 'identifier' ) + '"]' );
+
+        element.parentNode.removeChild( element );
     }
 
 </script>
