@@ -1465,9 +1465,19 @@ class Torrent
     }
 
     /**
+     * Contains the path from which folder the application should work.
+     *
+     * @since 0.0.8 (2018-06-10)
+     * @access private
+     *
+     * @var <string>
+     */
+    private $workspace = '';
+
+    /**
      * Can be called to specify which directory to work with.
      *
-     * @since 0.0.7 (2018-06-03)
+     * @since 0.0.8 (2018-06-10)
      * @access public
      *
      * @param $value <null>
@@ -1476,6 +1486,8 @@ class Torrent
      */
     public function workspace( $value = null )
     {
+        $this->workspace = is_null( $value ) ? dirname( __FILE__ ) : $value;
+
         return $this;
     }
 
@@ -1507,31 +1519,66 @@ class Torrent
     /**
      * Consists of an array containing the search patterns to be included or excluded.
      *
-     * @since 0.0.7 (2018-06-03)
+     * @since 0.0.8 (2018-06-10)
      * @access private
      *
      * @var <array>
      */
-    private $pattern = array( 'include' => null, 'exclude' => null );
+    private $pattern = array( 'include' => array(), 'exclude' => array() );
 
     /**
      * Can be called to include objects with a specific search pattern.
      *
-     * @since 0.0.7 (2018-06-03)
+     * @since 0.0.8 (2018-06-10)
      * @access public
      *
-     * @param $value <null> Contains the search pattern.
+     * @param <string|array> Contains the search pattern.
      *
      * @return \Torrent
      */
-    public function include( $value = null )
+    public function include()
     {
-        if ( is_null( $value ) == false )
-        {
-            $this->is_a_pattern_set = true;
+        $get_args = func_get_args();
 
-            array_push( $this->pattern[ 'include' ], $this->convert_a_wildcard_to_regex_pattern( $value ) );
+        $num_args = func_num_args();
+
+        if ( $num_args == 0 )
+        {
+            return false;
         }
+
+        if ( $num_args == 1 && is_string( $get_args[ 0 ] ) )
+        {
+            if ( strpos( $get_args[ 0 ], ',' ) !== false )
+            {
+                foreach ( explode( ',', $get_args[ 0 ] ) as $item )
+                {
+                    array_push( $this->pattern[ 'include' ], $item );
+                }
+            }
+            else
+            {
+                array_push( $this->pattern[ 'include' ], $get_args[ 0 ] );
+            }
+        }
+
+        if ( $num_args == 1 && is_array( $get_args[ 0 ] ) )
+        {
+            foreach ( $get_args[ 0 ] as $item )
+            {
+                array_push( $this->pattern[ 'include' ], $item );
+            }
+        }
+
+        if ( $num_args > 1 )
+        {
+            foreach ( $get_args as $item )
+            {
+                array_push( $this->pattern[ 'include' ], $item );
+            }
+        }
+
+        $this->is_a_pattern_set = true;
 
         return $this;
     }
@@ -1539,21 +1586,56 @@ class Torrent
     /**
      * Can be called to exclude objects with a specific search pattern.
      *
-     * @since 0.0.7 (2018-06-03)
+     * @since 0.0.8 (2018-06-10)
      * @access public
      *
-     * @param $value <null> Contains the search pattern.
+     * @param <string|array> Contains the search pattern.
      *
      * @return \Torrent
      */
-    public function exclude( $value = null )
+    public function exclude()
     {
-        if ( is_null( $value ) == false )
-        {
-            $this->is_a_pattern_set = true;
+        $get_args = func_get_args();
 
-            array_push( $this->pattern[ 'exclude' ], $this->convert_a_wildcard_to_regex_pattern( $value ) );
+        $num_args = func_num_args();
+
+        if ( $num_args == 0 )
+        {
+            return false;
         }
+
+        if ( $num_args == 1 && is_string( $get_args[ 0 ] ) )
+        {
+            if ( strpos( $get_args[ 0 ], ',' ) !== false )
+            {
+                foreach ( explode( ',', $get_args[ 0 ] ) as $item )
+                {
+                    array_push( $this->pattern[ 'exclude' ], $item );
+                }
+            }
+            else
+            {
+                array_push( $this->pattern[ 'exclude' ], $get_args[ 0 ] );
+            }
+        }
+
+        if ( $num_args == 1 && is_array( $get_args[ 0 ] ) )
+        {
+            foreach ( $get_args[ 0 ] as $item )
+            {
+                array_push( $this->pattern[ 'exclude' ], $item );
+            }
+        }
+
+        if ( $num_args > 1 )
+        {
+            foreach ( $get_args as $item )
+            {
+                array_push( $this->pattern[ 'exclude' ], $item );
+            }
+        }
+
+        $this->is_a_pattern_set = true;
 
         return $this;
     }
@@ -1580,6 +1662,8 @@ class Torrent
      */
     public function single( $void = null )
     {
+        $this->workspace();
+
         $this->is_single_processing_active = true;
 
         return $this;
@@ -1588,17 +1672,17 @@ class Torrent
     /**
      * Contains all information that was generated during processing. There can be multiple torrent files.
      *
-     * @since 0.0.7 (2018-06-03)
+     * @since 0.0.8 (2018-06-10)
      * @access private
      *
-     * @var <object>
+     * @var <array>
      */
-    private $torrent = (object) [];
+    private $torrent = array();
 
     /**
      * Search for single files using the search pattern and create torrent files from them.
      *
-     * @since 0.0.5
+     * @since 0.0.8 (2018-06-10)
      * @access public
      *
      * @param <string>
@@ -1607,15 +1691,17 @@ class Torrent
      */
     public function file( $void = null )
     {
+        $this->pattern[ 'include' ] = $this->convert_a_wildcard_to_regex_pattern( $this->pattern[ 'include' ] );
+
+        $this->pattern[ 'exclude' ] = $this->convert_a_wildcard_to_regex_pattern( $this->pattern[ 'exclude' ] );
+
         if ( $this->is_single_processing_active )
         {
-            $path = dirname( __FILE__ );
-
-            $iterator = new RecursiveDirectoryIterator( $path, FilesystemIterator::SKIP_DOTS );
+            $iterator = new RecursiveDirectoryIterator( $this->workspace, FilesystemIterator::SKIP_DOTS );
 
             if ( $this->is_a_pattern_set )
             {
-                $iterator = new RegexIterator( $iterator, $this->pattern );
+                $iterator = new RegexIterator( $iterator, $this->pattern[ 'include' ] );
             }
 
             foreach ( $iterator as $object )
@@ -1663,7 +1749,7 @@ class Torrent
     /**
      * Convert a wildcard to RegEx pattern.
      *
-     * @since 0.0.5
+     * @since 0.0.8 (2018-06-10)
      * @access private
      *
      * @param $value <string> String with wildcards converted to the RegEx standard.
@@ -1672,21 +1758,28 @@ class Torrent
      */
     private function convert_a_wildcard_to_regex_pattern( $value = null )
     {
-        if ( empty( $value ) ): return false; endif;
+        $value = is_null( $value ) ? '*' : $value;
+
+        $value = is_string( $value ) ? preg_quote( $value, '/' ) : $value;
+
+        if ( is_string( $value ) && strpos( $value, ',' ) !== false )
+        {
+            $value = str_replace( ',', '|', $value );
+        }
 
         if ( is_array( $value ) )
         {
-            // '*write.*', '*manager.*'
-        }
+            foreach ( $value as $index => $item )
+            {
+                $value[ $index ] = preg_quote( $item, '/' );
+            }
 
-        if ( strpos( $value, ',' ) !== false )
-        {
-            // '*write.*,*manager.*'
+            $value = implode( '|', $value );
         }
 
         // fnmatch( 'dir/*/file', 'dir/folder1/file' ); // The operation of the function still needs to be checked.
 
-        return '/^' . str_replace( '\*' , '.+?', preg_quote( is_null( $value ) ? '*' : $value, '/' ) ) . '$/i';
+        return '/^' . str_replace( '\*' , '.+?', $value ) . '$/i';
     }
 
     /**

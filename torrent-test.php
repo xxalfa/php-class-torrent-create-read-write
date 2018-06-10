@@ -32,7 +32,17 @@
 
     $torrent = new Torrent();
 
-    // $torrent->single()->file( '*ICENS*' );
+    // $torrent->convert_a_wildcard_to_regex_pattern( array( '*test*', '*was*' ) );
+
+    $torrent->include( '*test*' );
+
+    // $torrent->include( '*test*,*mana*' );
+
+    // $torrent->include( '*test*', '*mana*' );
+
+    // $torrent->include( array( '*test*', '*mana*' ) );
+
+    $torrent->single()->file();
 
     // $torrent->single()->folder( '*' );
 
