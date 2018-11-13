@@ -6,9 +6,9 @@
 
     error_reporting( -1 );
 
-    ini_set( 'html_errors', 0 );
+    ini_set( 'html_errors', '0' );
 
-    ini_set( 'display_errors', 1 );
+    ini_set( 'display_errors', '1' );
 
     define( 'CORE_DIR', dirname( __FILE__ ) . DIRECTORY_SEPARATOR );
 
